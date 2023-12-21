@@ -1,6 +1,6 @@
 ﻿namespace MusicProgressLogAPI.Models.Domain
 {
-    public class Upload
+    public class ProgressLog
     {
         public Guid Id { get; set; }
         public string Title { get; set; }

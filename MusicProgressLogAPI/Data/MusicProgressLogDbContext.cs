@@ -12,6 +12,6 @@ namespace MusicProgressLogAPI.Data
 
         public DbSet<AudioFile> AudioFiles { get; set; }
 
-        public DbSet<Upload> Uploads { get; set; }
+        public DbSet<ProgressLog> ProgressLogs { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MusicProgressLogAPI.Data;
 
@@ -11,9 +12,11 @@ using MusicProgressLogAPI.Data;
 namespace MusicProgressLogAPI.Migrations
 {
     [DbContext(typeof(MusicProgressLogDbContext))]
-    partial class MusicProgressLogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231221180503_Change table names")]
+    partial class Changetablenames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

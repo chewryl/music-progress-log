@@ -18,12 +18,11 @@ namespace MusicProgressLogAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var progressLogs = _dbContext.ProgressLogs.ToList();
-                var audioFiles = _dbContext.AudioFiles.ToList();
+                var progressLogs = await _dbContext.ProgressLogs.Include(x => x.AudioFile).ToListAsync();
 
                 var progressLogsDtos = new List<ProgressLogDto>();
                 foreach (var progressLog in progressLogs)
@@ -36,7 +35,7 @@ namespace MusicProgressLogAPI.Controllers
                         Title = progressLog.Title
                     };
 
-                    var audioFile = audioFiles.FirstOrDefault(x => x.Id == progressLog.AudioFile.Id);
+                    var audioFile = await _dbContext.AudioFiles.FirstOrDefaultAsync(x => x.Id == progressLog.AudioFile.Id);
 
                     if (audioFile != null)
                     {
@@ -56,11 +55,11 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
-        public IActionResult GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             try
             {
-                var progressLog = _dbContext.ProgressLogs.Include(x => x.AudioFile).FirstOrDefault(x => x.Id == id);
+                var progressLog = await _dbContext.ProgressLogs.Include(x => x.AudioFile).FirstOrDefaultAsync(x => x.Id == id);
 
                 if (progressLog == null)
                 {
@@ -85,7 +84,7 @@ namespace MusicProgressLogAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(AddProgressLogRequestDto addProgressLogRequestDto)
+        public async Task<IActionResult> Create(AddProgressLogRequestDto addProgressLogRequestDto)
         {
             ProgressLog progressLogDomainModel;
             try
@@ -98,8 +97,8 @@ namespace MusicProgressLogAPI.Controllers
                     AudioFile = addProgressLogRequestDto.AudioFile
                 };
 
-                _dbContext.ProgressLogs.Add(progressLogDomainModel);
-                _dbContext.SaveChanges();
+                await _dbContext.ProgressLogs.AddAsync(progressLogDomainModel);
+                await _dbContext.SaveChangesAsync();
 
                 // Map domain model back to DTO to send back
                 var progressLogDto = new ProgressLogDto()
@@ -121,11 +120,11 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateProgressLogRequestDto progressLogDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateProgressLogRequestDto progressLogDto)
         {
             try
             {
-                var progressLog = _dbContext.ProgressLogs.Include(x => x.AudioFile).FirstOrDefault(x => x.Id == id);
+                var progressLog = await _dbContext.ProgressLogs.Include(x => x.AudioFile).FirstOrDefaultAsync(x => x.Id == id);
                 if (progressLog == null)
                 {
                     return NotFound(id);
@@ -138,7 +137,7 @@ namespace MusicProgressLogAPI.Controllers
                 progressLog.AudioFile.FileLocation = progressLogDto.AudioFile.FileLocation;
                 progressLog.AudioFile.MIMEType = progressLogDto.AudioFile.MIMEType;
 
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
                 // convert updated domain model to DTO to send back
                 var progressLogUpdatedDto = new ProgressLogDto
@@ -160,11 +159,11 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
-        public IActionResult Delete([FromRoute] Guid id)
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             try
             {
-                var progressLog = _dbContext.ProgressLogs.Include(x => x.AudioFile).FirstOrDefault(x => x.Id == id);
+                var progressLog = await _dbContext.ProgressLogs.Include(x => x.AudioFile).FirstOrDefaultAsync(x => x.Id == id);
 
                 if (progressLog == null)
                 {
@@ -173,7 +172,7 @@ namespace MusicProgressLogAPI.Controllers
 
                 _dbContext.ProgressLogs.Remove(progressLog);
                 _dbContext.AudioFiles.Remove(progressLog.AudioFile);
-                _dbContext.SaveChanges();
+                await _dbContext.SaveChangesAsync();
 
                 return Ok(progressLog.Id);
             }

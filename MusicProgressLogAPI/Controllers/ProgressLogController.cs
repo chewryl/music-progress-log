@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MusicProgressLogAPI.Models.Domain;
 using MusicProgressLogAPI.Models.DTO;
@@ -11,10 +12,12 @@ namespace MusicProgressLogAPI.Controllers
     public class ProgressLogController : ControllerBase
     {
         private readonly IProgressLogRepository _repository;
+        private readonly IMapper _mapper;
 
-        public ProgressLogController(IProgressLogRepository repository)
+        public ProgressLogController(IProgressLogRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -23,23 +26,9 @@ namespace MusicProgressLogAPI.Controllers
             try
             {
                 var progressLogs = await _repository.GetAllAsync();
+                var progressLogDtos = _mapper.Map<List<ProgressLogDto>>(progressLogs);
 
-                var progressLogsDtos = new List<ProgressLogDto>();
-                foreach (var progressLog in progressLogs)
-                {
-                    var progressLogDto = new ProgressLogDto
-                    {
-                        Id = progressLog.Id,
-                        Date = progressLog.Date,
-                        Description = progressLog.Description,
-                        Title = progressLog.Title,
-                        AudioFile = progressLog.AudioFile
-                    };
-
-                    progressLogsDtos.Add(progressLogDto);
-                }
-
-                return Ok(progressLogsDtos);
+                return Ok(progressLogDtos);
             }
             catch (Exception ex)
             {
@@ -60,16 +49,7 @@ namespace MusicProgressLogAPI.Controllers
                     return NotFound(id);
                 }
 
-                var progressLogDto = new ProgressLogDto
-                {
-                    Id = progressLog.Id,
-                    Date = progressLog.Date,
-                    Description = progressLog.Description,
-                    Title = progressLog.Title,
-                    AudioFile = progressLog.AudioFile
-                };
-
-                return Ok(progressLogDto);
+                return Ok(_mapper.Map<ProgressLogDto>(progressLog));
             }
             catch (Exception ex)
             {
@@ -83,25 +63,9 @@ namespace MusicProgressLogAPI.Controllers
             ProgressLog progressLogDomainModel;
             try
             {
-                progressLogDomainModel = new ProgressLog
-                {
-                    Title = addProgressLogRequestDto.Title,
-                    Date = addProgressLogRequestDto.Date,
-                    Description = addProgressLogRequestDto.Description,
-                    AudioFile = addProgressLogRequestDto.AudioFile
-                };
-
+                progressLogDomainModel = _mapper.Map<ProgressLog>(addProgressLogRequestDto);
                 progressLogDomainModel = await _repository.CreateAsync(progressLogDomainModel);
-
-                // Map domain model back to DTO to send back
-                var progressLogDto = new ProgressLogDto()
-                {
-                    Id = progressLogDomainModel.Id,
-                    Title = progressLogDomainModel.Title,
-                    Date = progressLogDomainModel.Date,
-                    Description = progressLogDomainModel.Description,
-                    AudioFile = progressLogDomainModel.AudioFile
-                };
+                var progressLogDto = _mapper.Map<ProgressLogDto>(progressLogDomainModel);
 
                 return CreatedAtAction(nameof(Create), new { id = progressLogDomainModel.Id }, progressLogDto);
             }
@@ -113,39 +77,20 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateProgressLogRequestDto progressLogDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateProgressLogRequestDto updateProgressLogDto)
         {
             try
             {
-                var progressLog = await _repository.UpdateAsync(id, new ProgressLog
-                {
-                    Title = progressLogDto.Title,
-                    Description = progressLogDto.Description,
-                    AudioFile = new AudioFile
-                    {
-                        FileName = progressLogDto.AudioFile.FileName,
-                        FileData = progressLogDto.AudioFile.FileData,
-                        FileLocation = progressLogDto.AudioFile.FileLocation,
-                        MIMEType = progressLogDto.AudioFile.MIMEType
-                    }
-                });
+                var updateProgressLogRequest = _mapper.Map<ProgressLog>(updateProgressLogDto);
 
-                if (progressLog == null)
+                var updatedProgressLog = await _repository.UpdateAsync(id, updateProgressLogRequest);
+
+                if (updatedProgressLog == null)
                 {
                     return NotFound(id);
                 }
-
-                // convert updated domain model to DTO to send back
-                var progressLogUpdatedDto = new ProgressLogDto
-                {
-                    Id = progressLog.Id,
-                    Title = progressLog.Title,
-                    Description = progressLog.Description,
-                    Date = progressLog.Date,
-                    AudioFile = progressLog.AudioFile
-                };
-
-                return Ok(progressLogUpdatedDto);
+                
+                return Ok(_mapper.Map<ProgressLogDto>(updatedProgressLog));
             }
             catch (Exception ex)
             {

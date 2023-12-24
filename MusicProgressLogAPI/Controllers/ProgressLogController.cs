@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MusicProgressLogAPI.Data;
 using MusicProgressLogAPI.Models.Domain;
 using MusicProgressLogAPI.Models.DTO;
+using MusicProgressLogAPI.Repositories;
 
 namespace MusicProgressLogAPI.Controllers
 {
@@ -10,11 +10,11 @@ namespace MusicProgressLogAPI.Controllers
     [ApiController]
     public class ProgressLogController : ControllerBase
     {
-        private readonly MusicProgressLogDbContext _dbContext;
+        private readonly IProgressLogRepository _repository;
 
-        public ProgressLogController(MusicProgressLogDbContext dbContext)
+        public ProgressLogController(IProgressLogRepository repository)
         {
-            _dbContext = dbContext;
+            _repository = repository;
         }
 
         [HttpGet]
@@ -22,7 +22,7 @@ namespace MusicProgressLogAPI.Controllers
         {
             try
             {
-                var progressLogs = await _dbContext.ProgressLogs.Include(x => x.AudioFile).ToListAsync();
+                var progressLogs = await _repository.GetAllAsync();
 
                 var progressLogsDtos = new List<ProgressLogDto>();
                 foreach (var progressLog in progressLogs)
@@ -32,15 +32,9 @@ namespace MusicProgressLogAPI.Controllers
                         Id = progressLog.Id,
                         Date = progressLog.Date,
                         Description = progressLog.Description,
-                        Title = progressLog.Title
+                        Title = progressLog.Title,
+                        AudioFile = progressLog.AudioFile
                     };
-
-                    var audioFile = await _dbContext.AudioFiles.FirstOrDefaultAsync(x => x.Id == progressLog.AudioFile.Id);
-
-                    if (audioFile != null)
-                    {
-                        progressLogDto.AudioFile = audioFile;
-                    }
 
                     progressLogsDtos.Add(progressLogDto);
                 }
@@ -59,7 +53,7 @@ namespace MusicProgressLogAPI.Controllers
         {
             try
             {
-                var progressLog = await _dbContext.ProgressLogs.Include(x => x.AudioFile).FirstOrDefaultAsync(x => x.Id == id);
+                var progressLog = await _repository.GetByIdAsync(id);
 
                 if (progressLog == null)
                 {
@@ -97,8 +91,7 @@ namespace MusicProgressLogAPI.Controllers
                     AudioFile = addProgressLogRequestDto.AudioFile
                 };
 
-                await _dbContext.ProgressLogs.AddAsync(progressLogDomainModel);
-                await _dbContext.SaveChangesAsync();
+                progressLogDomainModel = await _repository.CreateAsync(progressLogDomainModel);
 
                 // Map domain model back to DTO to send back
                 var progressLogDto = new ProgressLogDto()
@@ -124,20 +117,23 @@ namespace MusicProgressLogAPI.Controllers
         {
             try
             {
-                var progressLog = await _dbContext.ProgressLogs.Include(x => x.AudioFile).FirstOrDefaultAsync(x => x.Id == id);
+                var progressLog = await _repository.UpdateAsync(id, new ProgressLog
+                {
+                    Title = progressLogDto.Title,
+                    Description = progressLogDto.Description,
+                    AudioFile = new AudioFile
+                    {
+                        FileName = progressLogDto.AudioFile.FileName,
+                        FileData = progressLogDto.AudioFile.FileData,
+                        FileLocation = progressLogDto.AudioFile.FileLocation,
+                        MIMEType = progressLogDto.AudioFile.MIMEType
+                    }
+                });
+
                 if (progressLog == null)
                 {
                     return NotFound(id);
                 }
-
-                progressLog.Title = progressLogDto.Title;
-                progressLog.Description = progressLogDto.Description;
-                progressLog.AudioFile.FileName = progressLogDto.AudioFile.FileName;
-                progressLog.AudioFile.FileData = progressLogDto.AudioFile.FileData;
-                progressLog.AudioFile.FileLocation = progressLogDto.AudioFile.FileLocation;
-                progressLog.AudioFile.MIMEType = progressLogDto.AudioFile.MIMEType;
-
-                await _dbContext.SaveChangesAsync();
 
                 // convert updated domain model to DTO to send back
                 var progressLogUpdatedDto = new ProgressLogDto
@@ -163,18 +159,14 @@ namespace MusicProgressLogAPI.Controllers
         {
             try
             {
-                var progressLog = await _dbContext.ProgressLogs.Include(x => x.AudioFile).FirstOrDefaultAsync(x => x.Id == id);
+                var deletedProgressLogId = await _repository.DeleteAsync(id);
 
-                if (progressLog == null)
+                if (deletedProgressLogId == null)
                 {
                     return NotFound(id);
                 }
 
-                _dbContext.ProgressLogs.Remove(progressLog);
-                _dbContext.AudioFiles.Remove(progressLog.AudioFile);
-                await _dbContext.SaveChangesAsync();
-
-                return Ok(progressLog.Id);
+                return Ok(deletedProgressLogId);
             }
             catch (Exception ex)
             {

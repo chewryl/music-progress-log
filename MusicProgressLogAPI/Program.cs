@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MusicProgressLogAPI.Data;
+using MusicProgressLogAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MusicProgressLogDbContext>(options => 
 options.UseSqlServer(builder.Configuration["MusicProgressLog:ConnectionString"]));
+builder.Services.AddScoped<IProgressLogRepository, SQLProgressLogRepository>();
 
 var app = builder.Build();
 

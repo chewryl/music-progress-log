@@ -60,14 +60,14 @@ namespace MusicProgressLogAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(AddProgressLogRequestDto addProgressLogRequestDto)
         {
-            ProgressLog progressLogDomainModel;
+            ProgressLog progressLog;
             try
             {
-                progressLogDomainModel = _mapper.Map<ProgressLog>(addProgressLogRequestDto);
-                progressLogDomainModel = await _repository.CreateAsync(progressLogDomainModel);
-                var progressLogDto = _mapper.Map<ProgressLogDto>(progressLogDomainModel);
+                progressLog = _mapper.Map<ProgressLog>(addProgressLogRequestDto);
+                progressLog = await _repository.CreateAsync(progressLog);
+                var createdProgressLogDto = _mapper.Map<ProgressLogDto>(progressLog);
 
-                return CreatedAtAction(nameof(Create), new { id = progressLogDomainModel.Id }, progressLogDto);
+                return CreatedAtAction(nameof(Create), new { id = progressLog.Id }, createdProgressLogDto);
             }
             catch (Exception ex)
             {
@@ -77,11 +77,11 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateProgressLogRequestDto updateProgressLogDto)
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateProgressLogRequestDto updateProgressLogRequestDto)
         {
             try
             {
-                var updateProgressLogRequest = _mapper.Map<ProgressLog>(updateProgressLogDto);
+                var updateProgressLogRequest = _mapper.Map<ProgressLog>(updateProgressLogRequestDto);
 
                 var updatedProgressLog = await _repository.UpdateAsync(id, updateProgressLogRequest);
 

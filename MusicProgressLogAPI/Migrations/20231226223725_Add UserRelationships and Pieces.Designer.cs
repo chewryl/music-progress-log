@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MusicProgressLogAPI.Data;
 
@@ -11,9 +12,11 @@ using MusicProgressLogAPI.Data;
 namespace MusicProgressLogAPI.Migrations
 {
     [DbContext(typeof(MusicProgressLogDbContext))]
-    partial class MusicProgressLogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231226223725_Add UserRelationships and Pieces")]
+    partial class AddUserRelationshipsandPieces
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace MusicProgressLogAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AudioFiles", (string)null);
+                    b.ToTable("AudioFiles");
                 });
 
             modelBuilder.Entity("MusicProgressLogAPI.Models.Domain.Piece", b =>
@@ -72,7 +75,7 @@ namespace MusicProgressLogAPI.Migrations
 
                     b.HasIndex("UserRelationshipId");
 
-                    b.ToTable("Pieces", (string)null);
+                    b.ToTable("Pieces");
                 });
 
             modelBuilder.Entity("MusicProgressLogAPI.Models.Domain.ProgressLog", b =>
@@ -108,7 +111,7 @@ namespace MusicProgressLogAPI.Migrations
 
                     b.HasIndex("UserRelationshipId");
 
-                    b.ToTable("ProgressLogs", (string)null);
+                    b.ToTable("ProgressLogs");
                 });
 
             modelBuilder.Entity("MusicProgressLogAPI.Models.Domain.UserRelationship", b =>
@@ -123,7 +126,7 @@ namespace MusicProgressLogAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserRelationships", (string)null);
+                    b.ToTable("UserRelationships");
                 });
 
             modelBuilder.Entity("MusicProgressLogAPI.Models.Domain.Piece", b =>

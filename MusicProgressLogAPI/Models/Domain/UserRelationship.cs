@@ -8,7 +8,7 @@ namespace MusicProgressLogAPI.Models.Domain
         public string UserName { get; set; }
 
         // Collection navigation containing dependents
-        public ICollection<ProgressLog> ProgressLogs { get; set; } = new List<ProgressLog>();
-        public ICollection<Piece> Pieces { get; set; } = new List<Piece>();
+        public ICollection<ProgressLog>? ProgressLogs { get; set; }
+        public ICollection<Piece>? Pieces { get; set; }
     }
 }

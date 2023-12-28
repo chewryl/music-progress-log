@@ -1,4 +1,6 @@
-﻿namespace MusicProgressLogAPI.Models.Domain
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MusicProgressLogAPI.Models.Domain
 {
     public class Piece
     {

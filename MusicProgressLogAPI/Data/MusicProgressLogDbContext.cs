@@ -29,7 +29,7 @@ namespace MusicProgressLogAPI.Data
                 .HasMany(x => x.Pieces)
                 .WithOne()
                 .HasForeignKey(x => x.UserRelationshipId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MusicProgressLogAPI.Models.Domain;
 using MusicProgressLogAPI.Models.DTO;
@@ -23,20 +22,45 @@ namespace MusicProgressLogAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await _repository.GetAllAsync());
+            var users = await _repository.GetAllAsync();
+            return Ok(users.Select(x => _mapper.Map<UserRelationshipDto>(x)).ToList());
         }
 
         [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            return Ok(await _repository.GetByIdAsync(id));
+            var user = await _repository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound(id);
+            }
+            return Ok(user);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UserRelationshipDto userRelationshipDto)
         {
+            var users = await _repository.GetAllAsync();
+            if (users.Any(u => u.UserName == userRelationshipDto.UserName)) 
+            {
+                return StatusCode(409, $"UserName '{userRelationshipDto.UserName}' already exists in database.");
+            }
+
             return Ok(await _repository.CreateAsync(_mapper.Map<UserRelationship>(userRelationshipDto)));
+        }
+
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            var deletedUserId = await _repository.DeleteAsync(id);
+            if (deletedUserId == null)
+            {
+                return NotFound(id);
+            }
+
+            return Ok(deletedUserId);
         }
     }
 }

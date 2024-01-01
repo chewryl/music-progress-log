@@ -17,5 +17,20 @@ namespace MusicProgressLogAPI.Repositories
         {
             return await _dbContext.UserRelationships.Include(x => x.ProgressLogs).Include(x => x.Pieces).FirstOrDefaultAsync(x => x.Id == id);
         }
+
+        public override async Task<Guid?> DeleteAsync(Guid id)
+        {
+            var user = await GetByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            _dbContext.Attach(user);
+            _dbContext.Entry(user).State = EntityState.Deleted;
+
+            await _dbContext.SaveChangesAsync();
+            return id;
+        }
     }
 }

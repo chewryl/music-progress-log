@@ -24,7 +24,7 @@ namespace MusicProgressLogAPI.Repositories
             return obj;
         }
 
-        public async Task<Guid?> DeleteAsync(Guid id)
+        public virtual async Task<Guid?> DeleteAsync(Guid id)
         {
             var obj = await _dbSet.FindAsync(id);
             if (obj == null)
@@ -47,7 +47,7 @@ namespace MusicProgressLogAPI.Repositories
            return await _dbSet.FindAsync(id);
         }
 
-        public void UpdateAsync(Guid id, T obj)
+        public virtual void UpdateAsync(Guid id, T obj)
         {
             // Make entity state modified.
             _dbSet.Attach(obj);

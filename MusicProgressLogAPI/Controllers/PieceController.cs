@@ -29,7 +29,13 @@ namespace MusicProgressLogAPI.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            return Ok(await _repository.GetByIdAsync(id));
+            var piece = await _repository.GetByIdAsync(id);
+            if (piece == null)
+            {
+                return NotFound(id);
+            }
+
+            return Ok(piece);
         }
 
         [HttpPost]

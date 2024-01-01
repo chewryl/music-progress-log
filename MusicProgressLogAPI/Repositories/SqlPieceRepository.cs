@@ -11,10 +11,5 @@ namespace MusicProgressLogAPI.Repositories
         {
             _dbContext = dbContext;
         }
-
-        public override async Task<Piece?> GetByIdAsync(Guid id)
-        {
-            return await _dbContext.Pieces.Include(x => x.UserRelationship).FirstOrDefaultAsync(x => x.Id == id);
-        }
     }
 }

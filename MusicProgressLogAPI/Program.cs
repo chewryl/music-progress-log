@@ -19,9 +19,7 @@ builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
-builder.Services.AddScoped<IProgressLogRepository, SQLProgressLogRepository_old>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(SqlRepositoryBase<>));
-builder.Services.AddScoped<IRepository<Piece>, SqlPieceRepository>();
 builder.Services.AddScoped<IRepository<UserRelationship>, SqlUserRelationshipRepository>();
 builder.Services.AddAutoMapper(typeof(AutoMapperMappings));
 

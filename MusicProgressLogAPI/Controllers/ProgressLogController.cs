@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MusicProgressLogAPI.Models.Domain;
 using MusicProgressLogAPI.Models.DTO;
-using MusicProgressLogAPI.Repositories;
+using MusicProgressLogAPI.Services.Interfaces;
+using System.Net;
 
 namespace MusicProgressLogAPI.Controllers
 {
@@ -11,112 +11,80 @@ namespace MusicProgressLogAPI.Controllers
     [ApiController]
     public class ProgressLogController : ControllerBase
     {
-        private readonly IProgressLogRepository _repository;
+        private readonly IProgressLogService _progressLogService;
         private readonly IMapper _mapper;
 
-        public ProgressLogController(IProgressLogRepository repository, IMapper mapper)
+        public ProgressLogController(IProgressLogService progressLogService, IMapper mapper)
         {
-            _repository = repository;
+            _progressLogService = progressLogService;
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            try
-            {
-                var progressLogs = await _repository.GetAllAsync();
-                var progressLogDtos = _mapper.Map<List<ProgressLogDto>>(progressLogs);
-
-                return Ok(progressLogDtos);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [HttpGet]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
-        {
-            try
-            {
-                var progressLog = await _repository.GetByIdAsync(id);
-
-                if (progressLog == null)
-                {
-                    return NotFound(id);
-                }
-
-                return Ok(_mapper.Map<ProgressLogDto>(progressLog));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
         [HttpPost]
-        public async Task<IActionResult> Create(AddProgressLogRequestDto addProgressLogRequestDto)
+        [Route("{userRelationshipId:Guid}")]
+        public async Task<IActionResult> Create([FromRoute] Guid userRelationshipId, [FromBody] ProgressLogDto progressLogRequestDto)
         {
-            ProgressLog progressLog;
-            try
-            {
-                progressLog = _mapper.Map<ProgressLog>(addProgressLogRequestDto);
-                progressLog = await _repository.CreateAsync(progressLog);
-                var createdProgressLogDto = _mapper.Map<ProgressLogDto>(progressLog);
+            var progressLog = _mapper.Map<ProgressLog>(progressLogRequestDto);
 
-                return CreatedAtAction(nameof(Create), new { id = progressLog.Id }, createdProgressLogDto);
-            }
-            catch (Exception ex)
+            var progressLogConfig = await _progressLogService.AddProgressLogForUser(userRelationshipId, progressLog);
+
+            if (progressLogConfig.StatusCode != HttpStatusCode.Created)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode((int)progressLogConfig.StatusCode, progressLogConfig.Message);
             }
+
+            return StatusCode((int)progressLogConfig.StatusCode, progressLogConfig.ProgressLogs.First());
+        }
+
+        [HttpGet]
+        [Route("{userRelationshipId:Guid}")]
+        public async Task<IActionResult> GetAllForUser([FromRoute] Guid userRelationshipId)
+        {
+            var progressLogConfig = await _progressLogService.GetAllProgressLogsForUser(userRelationshipId);
+
+            if (progressLogConfig.StatusCode != HttpStatusCode.OK)
+            {
+                return StatusCode((int)progressLogConfig.StatusCode, progressLogConfig.Message);
+            }
+
+            return StatusCode((int)progressLogConfig.StatusCode, progressLogConfig.ProgressLogs);
+        }
+
+        [HttpGet]
+        [Route("{userRelationshipId:Guid}/{progressLogId:Guid}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid userRelationshipId, [FromRoute] Guid progressLogId)
+        {
+            var progressLogConfig = await _progressLogService.GetProgressLogForUser(userRelationshipId, progressLogId);
+
+            if (progressLogConfig.StatusCode != HttpStatusCode.OK)
+            {
+                return StatusCode((int)progressLogConfig.StatusCode, progressLogConfig.Message);
+            }
+
+            return StatusCode((int)progressLogConfig.StatusCode, progressLogConfig.ProgressLogs.First());
         }
 
         [HttpPut]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateProgressLogRequestDto updateProgressLogRequestDto)
+        [Route("{progressLogId:Guid}")]
+        public async Task<IActionResult> Update(Guid progressLogId, [FromBody] ProgressLogDto progressLogToUpdateDto)
         {
-            try
-            {
-                var updateProgressLogRequest = _mapper.Map<ProgressLog>(updateProgressLogRequestDto);
+            var progressLog = _mapper.Map<ProgressLog>(progressLogToUpdateDto);
+            var progressLogConfig = await _progressLogService.UpdateProgressLog(progressLogId, progressLog);
 
-                var updatedProgressLog = await _repository.UpdateAsync(id, updateProgressLogRequest);
-
-                if (updatedProgressLog == null)
-                {
-                    return NotFound(id);
-                }
-                
-                return Ok(_mapper.Map<ProgressLogDto>(updatedProgressLog));
-            }
-            catch (Exception ex)
+            if (progressLogConfig.StatusCode != HttpStatusCode.OK)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode((int)progressLogConfig.StatusCode, progressLogConfig.Message);
             }
+
+            return StatusCode((int)progressLogConfig.StatusCode, progressLogConfig.ProgressLogs.First());
         }
 
         [HttpDelete]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        [Route("{progressLogId:Guid}")]
+        public async Task<IActionResult> Delete(Guid progressLogId)
         {
-            try
-            {
-                var deletedProgressLogId = await _repository.DeleteAsync(id);
-
-                if (deletedProgressLogId == null)
-                {
-                    return NotFound(id);
-                }
-
-                return Ok(deletedProgressLogId);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var progressLogConfig = await _progressLogService.DeleteProgressLog(progressLogId);
+            return StatusCode((int)progressLogConfig.StatusCode, progressLogConfig.Message);
         }
     }
 }

@@ -4,6 +4,8 @@ using MusicProgressLogAPI.Mappings;
 using MusicProgressLogAPI.Models.Domain;
 using MusicProgressLogAPI.Repositories;
 using MusicProgressLogAPI.Repositories.Interfaces;
+using MusicProgressLogAPI.Services;
+using MusicProgressLogAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,9 @@ builder.Services.AddControllersWithViews()
 );
 builder.Services.AddScoped(typeof(IRepository<>), typeof(SqlRepositoryBase<>));
 builder.Services.AddScoped<IRepository<UserRelationship>, SqlUserRelationshipRepository>();
+//builder.Services.AddScoped<IRepository<ProgressLog>, SqlProgressLogRepository>();
+builder.Services.AddScoped<IUserRelationshipRepository<ProgressLog>, SqlProgressLogRepository>();
+builder.Services.AddScoped<IProgressLogService, ProgressLogService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperMappings));
 
 var app = builder.Build();

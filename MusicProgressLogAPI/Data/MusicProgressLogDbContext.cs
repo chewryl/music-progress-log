@@ -30,6 +30,11 @@ namespace MusicProgressLogAPI.Data
                 .WithOne()
                 .HasForeignKey(x => x.UserRelationshipId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProgressLog>()
+                .HasOne(x => x.AudioFile)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

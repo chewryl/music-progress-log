@@ -9,10 +9,7 @@ namespace MusicProgressLogAPI.Mappings
         public AutoMapperMappings()
         {
             CreateMap<ProgressLogDto, ProgressLog>().ReverseMap();
-            CreateMap<AddProgressLogRequestDto, ProgressLog>();
-            CreateMap<UpdateProgressLogRequestDto, ProgressLog>();
             CreateMap<AudioFileDto, AudioFile>().ReverseMap();
-
             CreateMap<PieceDto, Piece>().ReverseMap();
             CreateMap<UserRelationshipDto, UserRelationship>().ReverseMap();
         }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using MusicProgressLogAPI.CustomActionFilters;
 using MusicProgressLogAPI.Models.Domain;
 using MusicProgressLogAPI.Models.DTO;
 using MusicProgressLogAPI.Repositories.Interfaces;
@@ -39,6 +40,7 @@ namespace MusicProgressLogAPI.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] PieceDto pieceDto)
         {
             var piece = _mapper.Map<Piece>(pieceDto);
@@ -47,6 +49,7 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpPut]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] PieceDto piece)
         {
             var existing = await _repository.GetByIdAsync(id);

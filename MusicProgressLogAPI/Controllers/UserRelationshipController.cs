@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using MusicProgressLogAPI.CustomActionFilters;
 using MusicProgressLogAPI.Models.Domain;
 using MusicProgressLogAPI.Models.DTO;
 using MusicProgressLogAPI.Repositories.Interfaces;
@@ -39,6 +40,7 @@ namespace MusicProgressLogAPI.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] UserRelationshipDto userRelationshipDto)
         {
             var users = await _repository.GetAllAsync();

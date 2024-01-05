@@ -1,5 +1,6 @@
 ﻿using MusicProgressLogAPI.Models.Domain;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace MusicProgressLogAPI.Models.DTO
 {
@@ -9,6 +10,7 @@ namespace MusicProgressLogAPI.Models.DTO
         public Guid Id { get; set; }
 
         [JsonProperty]
+        [Required]
         public string Title { get; set; }
         
         [JsonProperty]
@@ -18,6 +20,7 @@ namespace MusicProgressLogAPI.Models.DTO
         public string? Description { get; set; }
 
         [JsonProperty]
+        [Required]
         public Guid PieceId { get; set; }
 
         [JsonProperty("audioFile")]

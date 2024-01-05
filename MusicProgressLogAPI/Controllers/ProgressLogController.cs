@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using MusicProgressLogAPI.CustomActionFilters;
 using MusicProgressLogAPI.Models.Domain;
 using MusicProgressLogAPI.Models.DTO;
 using MusicProgressLogAPI.Services.Interfaces;
@@ -22,6 +23,7 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpPost]
         [Route("{userRelationshipId:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromRoute] Guid userRelationshipId, [FromBody] ProgressLogDto progressLogRequestDto)
         {
             var progressLog = _mapper.Map<ProgressLog>(progressLogRequestDto);
@@ -66,6 +68,7 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpPut]
         [Route("{progressLogId:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update(Guid progressLogId, [FromBody] ProgressLogDto progressLogToUpdateDto)
         {
             var progressLog = _mapper.Map<ProgressLog>(progressLogToUpdateDto);

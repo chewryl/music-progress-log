@@ -103,7 +103,7 @@ namespace MusicProgressLogAPI.Services
             }
         }
 
-        public async Task<ProgressLogConfig> GetAllProgressLogsForUser(Guid userRelationshipId)
+        public async Task<ProgressLogConfig> GetAllProgressLogsForUser(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace MusicProgressLogAPI.Services
                     };
                 }
 
-                var progressLogs = await _progressLogRepository.GetAllForUserAsync(userRelationshipId);
+                var progressLogs = await _progressLogRepository.GetAllForUserWithFilterAsync(userRelationshipId, filterOn, filterQuery);
                 return new ProgressLogConfig { StatusCode = HttpStatusCode.OK, ProgressLogs = progressLogs };
             }
             catch (Exception ex)

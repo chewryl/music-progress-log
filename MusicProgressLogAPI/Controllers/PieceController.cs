@@ -11,29 +11,31 @@ namespace MusicProgressLogAPI.Controllers
     [ApiController]
     public class PieceController : ControllerBase
     {
-        private readonly IRepository<Piece> _repository;
+        private readonly IUserRelationshipRepository<Piece> _repository;
         private readonly IMapper _mapper;
 
-        public PieceController(IRepository<Piece> repository, IMapper mapper)
+        public PieceController(IUserRelationshipRepository<Piece> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [Route("{userRelationshipId:Guid}")]
+        public async Task<IActionResult> GetAllForUser(Guid userRelationshipId, [FromQuery] string? filterOn = null, string? filterQuery = null)
         {
-            return Ok(await _repository.GetAllAsync());
+            return Ok(await _repository.GetAllForUserWithFilterAsync(userRelationshipId, filterOn, filterQuery));
         }
 
+
         [HttpGet]
-        [Route("{id:Guid}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        [Route("{userRelationshipId:Guid}/{progressLogId:Guid}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid userRelationshipId, [FromRoute] Guid progressLogId)
         {
-            var piece = await _repository.GetByIdAsync(id);
+            var piece = await _repository.GetByIdAsync(progressLogId);
             if (piece == null)
             {
-                return NotFound(id);
+                return NotFound(progressLogId);
             }
 
             return Ok(piece);

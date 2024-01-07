@@ -40,9 +40,9 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpGet]
         [Route("{userRelationshipId:Guid}")]
-        public async Task<IActionResult> GetAllForUser([FromRoute] Guid userRelationshipId)
+        public async Task<IActionResult> GetAllForUser([FromRoute] Guid userRelationshipId, [FromQuery] string? filterOn = null, string? filterQuery = null)
         {
-            var progressLogConfig = await _progressLogService.GetAllProgressLogsForUser(userRelationshipId);
+            var progressLogConfig = await _progressLogService.GetAllProgressLogsForUser(userRelationshipId, filterOn, filterQuery);
 
             if (progressLogConfig.StatusCode != HttpStatusCode.OK)
             {

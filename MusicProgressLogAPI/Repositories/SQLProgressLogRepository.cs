@@ -14,14 +14,25 @@ namespace MusicProgressLogAPI.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<ProgressLog>> GetAllForUserAsync(Guid userRelationshipId)
+        public async Task<IEnumerable<ProgressLog>> GetAllForUserWithFilterAsync(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null)
         {
-            return await _dbContext.ProgressLogs
+            var progressLogs = _dbContext.ProgressLogs
                 .Where(x => x.UserRelationshipId == userRelationshipId)
                 .Include(x => x.Piece)
                 .Include(x => x.AudioFile)
                 .OrderBy(x => x.Date)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(filterOn) && !string.IsNullOrEmpty(filterQuery))
+            {
+                if (filterOn.Equals("piece", StringComparison.OrdinalIgnoreCase))
+                {
+                    progressLogs = progressLogs.Where(x => x.Piece.Name.Contains(filterQuery));
+                }
+            }
+
+            return await progressLogs.ToListAsync();
+
         }
 
         public override async Task<ProgressLog?> GetByIdAsync(Guid id)

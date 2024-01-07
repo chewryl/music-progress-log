@@ -4,6 +4,6 @@ namespace MusicProgressLogAPI.Repositories.Interfaces
 {
     public interface IUserRelationshipRepository<T> : IRepository<T> where T : class
     {
-        Task<IEnumerable<T>> GetAllForUserAsync(Guid userRelationshipId);
+        Task<IEnumerable<T>> GetAllForUserWithFilterAsync(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null);
     }
 }

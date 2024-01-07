@@ -22,7 +22,7 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpGet]
         [Route("{userRelationshipId:Guid}")]
-        public async Task<IActionResult> GetAllForUser(Guid userRelationshipId, [FromQuery] string? filterOn = null, string? filterQuery = null)
+        public async Task<IActionResult> GetAllForUser(Guid userRelationshipId, [FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 30)
         {
             return Ok(await _repository.GetAllForUserWithFilterAsync(userRelationshipId, filterOn, filterQuery));
         }

@@ -14,7 +14,7 @@ namespace MusicProgressLogAPI.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Piece>> GetAllForUserWithFilterAsync(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null)
+        public async Task<IEnumerable<Piece>> GetAllForUserWithFilterAsync(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null, int pageNumber = 1, int pageSize = 30)
         {
             var pieces = _dbContext.Pieces
                 .Where(x => x.UserRelationshipId == userRelationshipId)
@@ -28,7 +28,9 @@ namespace MusicProgressLogAPI.Repositories
                 }
             }
 
-            return await pieces.ToListAsync();
+            var skipResults = (pageNumber - 1) * pageSize;
+
+            return await pieces.Skip(skipResults).Take(pageSize).ToListAsync();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace MusicProgressLogAPI.Repositories
         public async Task<IEnumerable<ProgressLog>> GetAllForUserWithFilterAsync(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null, int pageNumber = 1, int pageSize = 30)
         {
             var progressLogs = _dbContext.ProgressLogs
-                .Where(x => x.UserRelationshipId == userRelationshipId)
+                .Where(x => x.UserId == userRelationshipId)
                 .Include(x => x.Piece)
                 .Include(x => x.AudioFile)
                 .OrderBy(x => x.Date)

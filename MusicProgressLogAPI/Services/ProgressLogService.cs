@@ -11,14 +11,14 @@ namespace MusicProgressLogAPI.Services
     {
         private readonly IUserRelationshipRepository<ProgressLog> _progressLogRepository;
         private readonly IRepository<Piece> _pieceRepository;
-        private readonly IRepository<UserRelationship> _userRepository;
+        private readonly IRepository<ApplicationUser> _userRepository;
         private readonly IRepository<AudioFile> _audioRepository;
         private readonly IMapper _mapper;
 
         public ProgressLogService(
             IUserRelationshipRepository<ProgressLog> progressLogRepository,
             IRepository<Piece> pieceRepository,
-            IRepository<UserRelationship> userRepository,
+            IRepository<ApplicationUser> userRepository,
             IRepository<AudioFile> audioRepository,
             IMapper mapper)
         {
@@ -53,7 +53,7 @@ namespace MusicProgressLogAPI.Services
                     };
                 }
 
-                progressLog.UserRelationshipId = userRelationshipId;
+                progressLog.UserId = userRelationshipId;
 
                 progressLog = await _progressLogRepository.CreateAsync(progressLog);
                 return new ProgressLogConfig

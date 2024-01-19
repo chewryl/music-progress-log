@@ -1,12 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace MusicProgressLogAPI.Models.Domain
 {
-    public class UserRelationship
+    public class ApplicationUser : IdentityUser<Guid>
     {
-        public Guid Id { get; set; }
-        public string UserName { get; set; }
-
         // Collection navigation containing dependents
         public ICollection<ProgressLog> ProgressLogs { get; set; } = new List<ProgressLog>();
 

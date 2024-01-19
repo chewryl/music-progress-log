@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MusicProgressLogAPI.Models.Domain
 {
@@ -15,7 +16,6 @@ namespace MusicProgressLogAPI.Models.Domain
         [MaxLength(256)]
         public string Instrument { get; set; }
 
-        // Required foreign key
-        public Guid UserRelationshipId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

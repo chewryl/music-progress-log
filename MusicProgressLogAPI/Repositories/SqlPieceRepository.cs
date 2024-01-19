@@ -17,7 +17,8 @@ namespace MusicProgressLogAPI.Repositories
         public async Task<IEnumerable<Piece>> GetAllForUserWithFilterAsync(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null, int pageNumber = 1, int pageSize = 30)
         {
             var pieces = _dbContext.Pieces
-                .Where(x => x.UserRelationshipId == userRelationshipId)
+                .Where(x => x.UserId == userRelationshipId)
+                .OrderBy(x => x.Name)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(filterOn) && !string.IsNullOrEmpty(filterQuery))

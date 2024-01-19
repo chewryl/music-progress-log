@@ -6,11 +6,11 @@ namespace MusicProgressLogAPI.Repositories
 {
     public class SqlRepositoryBase<T> : IRepository<T> where T : class
     {
-        private readonly MusicProgressLogDbContext _dbContext;
+        private readonly DbContext _dbContext;
 
         private readonly DbSet<T> _dbSet;
 
-        public SqlRepositoryBase(MusicProgressLogDbContext dbContext)
+        public SqlRepositoryBase(DbContext dbContext)
         {
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<T>();

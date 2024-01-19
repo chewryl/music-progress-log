@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MusicProgressLogAPI.Data;
@@ -22,19 +23,33 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MusicProgressLogDbContext>(options =>
 options.UseSqlServer(builder.Configuration["MusicProgressLog:ConnectionString"], o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
-builder.Services.AddDbContext<MusicProgressLogAuthDbContext>(options =>
-options.UseSqlServer(builder.Configuration["MusicProgressLogAuth:ConnectionString"]));
-
 builder.Services.AddControllersWithViews()
     .AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
 builder.Services.AddScoped(typeof(IRepository<>), typeof(SqlRepositoryBase<>));
-builder.Services.AddScoped<IRepository<UserRelationship>, SqlUserRelationshipRepository>();
+builder.Services.AddScoped<IRepository<ApplicationUser>, SqlUserRelationshipRepository>();
 builder.Services.AddScoped<IUserRelationshipRepository<ProgressLog>, SqlProgressLogRepository>();
 builder.Services.AddScoped<IUserRelationshipRepository<Piece>, SqlPieceRepository>();
 builder.Services.AddScoped<IProgressLogService, ProgressLogService>();
+builder.Services.AddScoped<DbContext, MusicProgressLogDbContext>();
 builder.Services.AddAutoMapper(typeof(AutoMapperMappings));
+
+builder.Services.AddIdentityCore<ApplicationUser>()
+    .AddRoles<IdentityRole<Guid>>()
+    .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("MusicProgressLog")
+    .AddEntityFrameworkStores<MusicProgressLogDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequiredUniqueChars = 1;
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

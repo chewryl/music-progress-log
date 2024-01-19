@@ -5,7 +5,7 @@ namespace MusicProgressLogAPI.Data
 {
     public class MusicProgressLogDbContext : DbContext
     {
-        public MusicProgressLogDbContext(DbContextOptions dbContextOptions)
+        public MusicProgressLogDbContext(DbContextOptions<MusicProgressLogDbContext> dbContextOptions)
             :base(dbContextOptions)
         {
         }

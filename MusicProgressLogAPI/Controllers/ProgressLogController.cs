@@ -22,13 +22,13 @@ namespace MusicProgressLogAPI.Controllers
         }
 
         [HttpPost]
-        [Route("{userRelationshipId:Guid}")]
+        [Route("{userId:Guid}")]
         [ValidateModel]
-        public async Task<IActionResult> Create([FromRoute] Guid userRelationshipId, [FromBody] ProgressLogDto progressLogRequestDto)
+        public async Task<IActionResult> Create([FromRoute] Guid userId, [FromBody] ProgressLogDto progressLogRequestDto)
         {
             var progressLog = _mapper.Map<ProgressLog>(progressLogRequestDto);
 
-            var progressLogConfig = await _progressLogService.AddProgressLogForUser(userRelationshipId, progressLog);
+            var progressLogConfig = await _progressLogService.AddProgressLogForUser(userId, progressLog);
 
             if (progressLogConfig.StatusCode != HttpStatusCode.Created)
             {
@@ -39,10 +39,10 @@ namespace MusicProgressLogAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{userRelationshipId:Guid}")]
-        public async Task<IActionResult> GetAllForUser([FromRoute] Guid userRelationshipId, [FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 30)
+        [Route("{userId:Guid}")]
+        public async Task<IActionResult> GetAllForUser([FromRoute] Guid userId, [FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 30)
         {
-            var progressLogConfig = await _progressLogService.GetAllProgressLogsForUser(userRelationshipId, filterOn, filterQuery, pageNumber, pageSize);
+            var progressLogConfig = await _progressLogService.GetAllProgressLogsForUser(userId, filterOn, filterQuery, pageNumber, pageSize);
 
             if (progressLogConfig.StatusCode != HttpStatusCode.OK)
             {
@@ -53,10 +53,10 @@ namespace MusicProgressLogAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{userRelationshipId:Guid}/{progressLogId:Guid}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid userRelationshipId, [FromRoute] Guid progressLogId)
+        [Route("{userId:Guid}/{progressLogId:Guid}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromRoute] Guid progressLogId)
         {
-            var progressLogConfig = await _progressLogService.GetProgressLogForUser(userRelationshipId, progressLogId);
+            var progressLogConfig = await _progressLogService.GetProgressLogForUser(userId, progressLogId);
 
             if (progressLogConfig.StatusCode != HttpStatusCode.OK)
             {

@@ -9,14 +9,14 @@ namespace MusicProgressLogAPI.Services
 {
     public class ProgressLogService : IProgressLogService
     {
-        private readonly IUserRelationshipRepository<ProgressLog> _progressLogRepository;
+        private readonly IUserRepository<ProgressLog> _progressLogRepository;
         private readonly IRepository<Piece> _pieceRepository;
         private readonly IRepository<ApplicationUser> _userRepository;
         private readonly IRepository<AudioFile> _audioRepository;
         private readonly IMapper _mapper;
 
         public ProgressLogService(
-            IUserRelationshipRepository<ProgressLog> progressLogRepository,
+            IUserRepository<ProgressLog> progressLogRepository,
             IRepository<Piece> pieceRepository,
             IRepository<ApplicationUser> userRepository,
             IRepository<AudioFile> audioRepository,
@@ -29,17 +29,17 @@ namespace MusicProgressLogAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<ProgressLogConfig> AddProgressLogForUser(Guid userRelationshipId, ProgressLog progressLog)
+        public async Task<ProgressLogConfig> AddProgressLogForUser(Guid userId, ProgressLog progressLog)
         {
             try
             {
-                var user = await _userRepository.GetByIdAsync(userRelationshipId);
+                var user = await _userRepository.GetByIdAsync(userId);
                 if (user == null)
                 {
                     return new ProgressLogConfig
                     {
                         StatusCode = HttpStatusCode.NotFound,
-                        Message = $"User with UserRelationship Id '{userRelationshipId}' does not exist."
+                        Message = $"User with UserRelationship Id '{userId}' does not exist."
                     };
                 }
 
@@ -53,7 +53,7 @@ namespace MusicProgressLogAPI.Services
                     };
                 }
 
-                progressLog.UserId = userRelationshipId;
+                progressLog.UserId = userId;
 
                 progressLog = await _progressLogRepository.CreateAsync(progressLog);
                 return new ProgressLogConfig
@@ -103,21 +103,21 @@ namespace MusicProgressLogAPI.Services
             }
         }
 
-        public async Task<ProgressLogConfig> GetAllProgressLogsForUser(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null, int pageNumber = 1, int pageSize = 30)
+        public async Task<ProgressLogConfig> GetAllProgressLogsForUser(Guid userId, string? filterOn = null, string? filterQuery = null, int pageNumber = 1, int pageSize = 30)
         {
             try
             {
-                var user = await _userRepository.GetByIdAsync(userRelationshipId);
+                var user = await _userRepository.GetByIdAsync(userId);
                 if (user == null)
                 {
                     return new ProgressLogConfig
                     {
                         StatusCode = HttpStatusCode.NotFound,
-                        Message = $"User with UserRelationship Id '{userRelationshipId}' does not exist."
+                        Message = $"User with UserRelationship Id '{userId}' does not exist."
                     };
                 }
 
-                var progressLogs = await _progressLogRepository.GetAllForUserWithFilterAsync(userRelationshipId, filterOn, filterQuery, pageNumber, pageSize);
+                var progressLogs = await _progressLogRepository.GetAllForUserWithFilterAsync(userId, filterOn, filterQuery, pageNumber, pageSize);
                 return new ProgressLogConfig { StatusCode = HttpStatusCode.OK, ProgressLogs = progressLogs };
             }
             catch (Exception ex)
@@ -130,17 +130,17 @@ namespace MusicProgressLogAPI.Services
             }
         }
 
-        public async Task<ProgressLogConfig> GetProgressLogForUser(Guid userRelationshipId, Guid progressLogId)
+        public async Task<ProgressLogConfig> GetProgressLogForUser(Guid userId, Guid progressLogId)
         {
             try
             {
-                var user = await _userRepository.GetByIdAsync(userRelationshipId);
+                var user = await _userRepository.GetByIdAsync(userId);
                 if (user == null)
                 {
                     return new ProgressLogConfig
                     {
                         StatusCode = HttpStatusCode.NotFound,
-                        Message = $"User with UserRelationship Id '{userRelationshipId}' does not exist."
+                        Message = $"User with UserRelationship Id '{userId}' does not exist."
                     };
                 }
 

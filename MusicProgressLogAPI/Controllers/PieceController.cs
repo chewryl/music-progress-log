@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicProgressLogAPI.CustomActionFilters;
 using MusicProgressLogAPI.Models.Domain;
@@ -9,28 +10,29 @@ namespace MusicProgressLogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class PieceController : ControllerBase
     {
-        private readonly IUserRelationshipRepository<Piece> _repository;
+        private readonly IUserRepository<Piece> _repository;
         private readonly IMapper _mapper;
 
-        public PieceController(IUserRelationshipRepository<Piece> repository, IMapper mapper)
+        public PieceController(IUserRepository<Piece> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
 
         [HttpGet]
-        [Route("{userRelationshipId:Guid}")]
-        public async Task<IActionResult> GetAllForUser(Guid userRelationshipId, [FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 30)
+        [Route("{userId:Guid}")]
+        public async Task<IActionResult> GetAllForUser(Guid userId, [FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 30)
         {
-            return Ok(await _repository.GetAllForUserWithFilterAsync(userRelationshipId, filterOn, filterQuery));
+            return Ok(await _repository.GetAllForUserWithFilterAsync(userId, filterOn, filterQuery));
         }
 
 
         [HttpGet]
-        [Route("{userRelationshipId:Guid}/{progressLogId:Guid}")]
-        public async Task<IActionResult> GetById([FromRoute] Guid userRelationshipId, [FromRoute] Guid progressLogId)
+        [Route("{userId:Guid}/{progressLogId:Guid}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromRoute] Guid progressLogId)
         {
             var piece = await _repository.GetByIdAsync(progressLogId);
             if (piece == null)

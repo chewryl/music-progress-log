@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MusicProgressLogAPI.Models.Domain;
+using System.Security.Cryptography.Xml;
 
 namespace MusicProgressLogAPI.Data
 {
@@ -60,7 +61,7 @@ namespace MusicProgressLogAPI.Data
 
             modelBuilder.Entity<ProgressLog>()
                 .HasOne(x => x.Piece)
-                .WithOne()
+                .WithMany()
                 .OnDelete(DeleteBehavior.NoAction);
 
             // Seed roles

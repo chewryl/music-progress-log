@@ -26,6 +26,6 @@ namespace MusicProgressLogAPI.Models.DTO
         [JsonProperty("audioFile")]
         public AudioFileDto? AudioFile { get; set; }
 
-        public Guid UserRelationshipId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

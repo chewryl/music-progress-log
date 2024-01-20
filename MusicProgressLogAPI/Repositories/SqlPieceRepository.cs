@@ -5,7 +5,7 @@ using MusicProgressLogAPI.Repositories.Interfaces;
 
 namespace MusicProgressLogAPI.Repositories
 {
-    public class SqlPieceRepository : SqlRepositoryBase<Piece>, IUserRelationshipRepository<Piece>
+    public class SqlPieceRepository : SqlRepositoryBase<Piece>, IUserRepository<Piece>
     {
         private readonly MusicProgressLogDbContext _dbContext;
 
@@ -14,10 +14,10 @@ namespace MusicProgressLogAPI.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Piece>> GetAllForUserWithFilterAsync(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null, int pageNumber = 1, int pageSize = 30)
+        public async Task<IEnumerable<Piece>> GetAllForUserWithFilterAsync(Guid userId, string? filterOn = null, string? filterQuery = null, int pageNumber = 1, int pageSize = 30)
         {
             var pieces = _dbContext.Pieces
-                .Where(x => x.UserId == userRelationshipId)
+                .Where(x => x.UserId == userId)
                 .OrderBy(x => x.Name)
                 .AsQueryable();
 

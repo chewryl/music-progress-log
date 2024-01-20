@@ -29,8 +29,8 @@ builder.Services.AddControllersWithViews()
 );
 builder.Services.AddScoped(typeof(IRepository<>), typeof(SqlRepositoryBase<>));
 builder.Services.AddScoped<IRepository<ApplicationUser>, SqlUserRepository>();
-builder.Services.AddScoped<IUserRelationshipRepository<ProgressLog>, SqlProgressLogRepository>();
-builder.Services.AddScoped<IUserRelationshipRepository<Piece>, SqlPieceRepository>();
+builder.Services.AddScoped<IUserRepository<ProgressLog>, SqlProgressLogRepository>();
+builder.Services.AddScoped<IUserRepository<Piece>, SqlPieceRepository>();
 builder.Services.AddScoped<IProgressLogService, ProgressLogService>();
 builder.Services.AddScoped<DbContext, MusicProgressLogDbContext>();
 builder.Services.AddAutoMapper(typeof(AutoMapperMappings));

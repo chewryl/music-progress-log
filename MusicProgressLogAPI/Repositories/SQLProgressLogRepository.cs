@@ -5,7 +5,7 @@ using MusicProgressLogAPI.Repositories.Interfaces;
 
 namespace MusicProgressLogAPI.Repositories
 {
-    public class SqlProgressLogRepository : SqlRepositoryBase<ProgressLog>, IUserRelationshipRepository<ProgressLog>
+    public class SqlProgressLogRepository : SqlRepositoryBase<ProgressLog>, IUserRepository<ProgressLog>
     {
         private readonly MusicProgressLogDbContext _dbContext;
 
@@ -14,10 +14,10 @@ namespace MusicProgressLogAPI.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<ProgressLog>> GetAllForUserWithFilterAsync(Guid userRelationshipId, string? filterOn = null, string? filterQuery = null, int pageNumber = 1, int pageSize = 30)
+        public async Task<IEnumerable<ProgressLog>> GetAllForUserWithFilterAsync(Guid userId, string? filterOn = null, string? filterQuery = null, int pageNumber = 1, int pageSize = 30)
         {
             var progressLogs = _dbContext.ProgressLogs
-                .Where(x => x.UserId == userRelationshipId)
+                .Where(x => x.UserId == userId)
                 .Include(x => x.Piece)
                 .Include(x => x.AudioFile)
                 .OrderBy(x => x.Date)

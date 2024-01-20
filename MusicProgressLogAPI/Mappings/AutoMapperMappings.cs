@@ -11,7 +11,9 @@ namespace MusicProgressLogAPI.Mappings
             CreateMap<ProgressLogDto, ProgressLog>().ReverseMap();
             CreateMap<AudioFileDto, AudioFile>().ReverseMap();
             CreateMap<PieceDto, Piece>().ReverseMap();
-            CreateMap<UserRelationshipDto, ApplicationUser>().ReverseMap();
+            CreateMap<UserDto, ApplicationUser>().ReverseMap();
+            CreateMap<UserRequestDto, ApplicationUser>().ReverseMap();
+            CreateMap<UserResponseDto, ApplicationUser>().ReverseMap();
         }
     }
 }

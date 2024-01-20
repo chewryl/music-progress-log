@@ -38,7 +38,7 @@ namespace MusicProgressLogAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IdentityRole");
+                    b.ToTable("IdentityRole", (string)null);
 
                     b.HasData(
                         new
@@ -285,7 +285,7 @@ namespace MusicProgressLogAPI.Migrations
                     b.HasIndex("ProgressLogId")
                         .IsUnique();
 
-                    b.ToTable("AudioFiles");
+                    b.ToTable("AudioFiles", (string)null);
                 });
 
             modelBuilder.Entity("MusicProgressLogAPI.Models.Domain.Piece", b =>
@@ -316,7 +316,7 @@ namespace MusicProgressLogAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Pieces");
+                    b.ToTable("Pieces", (string)null);
                 });
 
             modelBuilder.Entity("MusicProgressLogAPI.Models.Domain.ProgressLog", b =>
@@ -350,7 +350,7 @@ namespace MusicProgressLogAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProgressLogs");
+                    b.ToTable("ProgressLogs", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

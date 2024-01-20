@@ -4,11 +4,11 @@ using MusicProgressLogAPI.Models.Domain;
 
 namespace MusicProgressLogAPI.Repositories
 {
-    public class SqlUserRelationshipRepository : SqlRepositoryBase<ApplicationUser>
+    public class SqlUserRepository : SqlRepositoryBase<ApplicationUser>
     {
         private readonly MusicProgressLogDbContext _dbContext;
 
-        public SqlUserRelationshipRepository(MusicProgressLogDbContext dbContext) 
+        public SqlUserRepository(MusicProgressLogDbContext dbContext) 
             : base(dbContext)
         {
             _dbContext = dbContext;
@@ -16,9 +16,7 @@ namespace MusicProgressLogAPI.Repositories
 
         public override async Task<ApplicationUser?> GetByIdAsync(Guid id)
         {
-            var identityUsers = await _dbContext.Users.FindAsync(id.ToString());
-           // return await _dbContext.UserRelationships.Include(x => x.ProgressLogs).Include(x => x.Pieces).FirstOrDefaultAsync(x => x.Id == id);
-            return null;
+            return await _dbContext.Users.Include(x => x.ProgressLogs).Include(x => x.Pieces).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public override async Task<Guid?> DeleteAsync(Guid id)

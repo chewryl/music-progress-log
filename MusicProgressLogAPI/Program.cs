@@ -28,7 +28,7 @@ builder.Services.AddControllersWithViews()
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
 builder.Services.AddScoped(typeof(IRepository<>), typeof(SqlRepositoryBase<>));
-builder.Services.AddScoped<IRepository<ApplicationUser>, SqlUserRelationshipRepository>();
+builder.Services.AddScoped<IRepository<ApplicationUser>, SqlUserRepository>();
 builder.Services.AddScoped<IUserRelationshipRepository<ProgressLog>, SqlProgressLogRepository>();
 builder.Services.AddScoped<IUserRelationshipRepository<Piece>, SqlPieceRepository>();
 builder.Services.AddScoped<IProgressLogService, ProgressLogService>();

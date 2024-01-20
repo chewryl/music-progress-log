@@ -41,9 +41,6 @@ namespace MusicProgressLogAPI.Data
                 }
             };
 
-            // Seed roles
-            modelBuilder.Entity<IdentityRole>().HasData(roles);
-
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(x => x.ProgressLogs)
                 .WithOne()
@@ -65,6 +62,9 @@ namespace MusicProgressLogAPI.Data
                 .HasOne(x => x.Piece)
                 .WithOne()
                 .OnDelete(DeleteBehavior.NoAction);
+
+            // Seed roles
+            modelBuilder.Entity<IdentityRole>().HasData(roles);
         }
     }
 }

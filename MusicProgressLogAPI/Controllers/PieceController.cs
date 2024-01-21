@@ -10,7 +10,7 @@ namespace MusicProgressLogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class PieceController : ControllerBase
     {
         private readonly IUserRepository<Piece> _repository;
@@ -54,6 +54,7 @@ namespace MusicProgressLogAPI.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Writer,Reader")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] PieceDto piece)
         {
             var existing = await _repository.GetByIdAsync(id);

@@ -32,6 +32,7 @@ builder.Services.AddScoped<IRepository<ApplicationUser>, SqlUserRepository>();
 builder.Services.AddScoped<IUserRepository<ProgressLog>, SqlProgressLogRepository>();
 builder.Services.AddScoped<IUserRepository<Piece>, SqlPieceRepository>();
 builder.Services.AddScoped<IProgressLogService, ProgressLogService>();
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<DbContext, MusicProgressLogDbContext>();
 builder.Services.AddAutoMapper(typeof(AutoMapperMappings));
 

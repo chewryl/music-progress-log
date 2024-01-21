@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MusicProgressLogAPI.CustomActionFilters;
 using MusicProgressLogAPI.Models.Domain;
@@ -10,6 +11,7 @@ namespace MusicProgressLogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProgressLogController : ControllerBase
     {
         private readonly IProgressLogService _progressLogService;

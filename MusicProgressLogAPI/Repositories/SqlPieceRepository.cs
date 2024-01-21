@@ -23,7 +23,7 @@ namespace MusicProgressLogAPI.Repositories
 
             if (!string.IsNullOrEmpty(filterOn) && !string.IsNullOrEmpty(filterQuery))
             {
-                if (filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                if (filterOn.Equals("Piece", StringComparison.OrdinalIgnoreCase))
                 {
                     pieces = pieces.Where(x => x.Name.Contains(filterQuery));
                 }

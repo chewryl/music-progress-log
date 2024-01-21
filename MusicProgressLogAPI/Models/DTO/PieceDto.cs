@@ -11,7 +11,6 @@ namespace MusicProgressLogAPI.Models.DTO
         public string Composer { get; set; }
         [Required]
         public string Instrument { get; set; }
-        [Required]
         public Guid UserId { get; set; }
     }
 }

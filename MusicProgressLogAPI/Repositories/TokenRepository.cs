@@ -20,7 +20,8 @@ namespace MusicProgressLogAPI.Repositories
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
             foreach (var role in roles)

@@ -24,6 +24,7 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpGet]
         [Route("{userId:Guid}")]
+        [Authorize(Policy = "UserOnly")]
         public async Task<IActionResult> GetAllForUser(Guid userId, [FromQuery] string? filterOn = null, [FromQuery] string? filterQuery = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 30)
         {
             return Ok(await _repository.GetAllForUserWithFilterAsync(userId, filterOn, filterQuery));
@@ -32,6 +33,7 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpGet]
         [Route("{userId:Guid}/{progressLogId:Guid}")]
+        [Authorize(Policy = "UserOnly")]
         public async Task<IActionResult> GetById([FromRoute] Guid userId, [FromRoute] Guid progressLogId)
         {
             var piece = await _repository.GetByIdAsync(progressLogId);
@@ -54,7 +56,7 @@ namespace MusicProgressLogAPI.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
-        [Authorize(Roles = "Writer,Reader")]
+        [Authorize(Policy = "UserOnly")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] PieceDto piece)
         {
             var existing = await _repository.GetByIdAsync(id);

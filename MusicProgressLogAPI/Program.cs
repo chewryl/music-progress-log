@@ -9,6 +9,7 @@ using MusicProgressLogAPI.Repositories;
 using MusicProgressLogAPI.Repositories.Interfaces;
 using MusicProgressLogAPI.Services;
 using MusicProgressLogAPI.Services.Interfaces;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,7 @@ builder.Services.AddScoped<IProgressLogService, ProgressLogService>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 builder.Services.AddScoped<DbContext, MusicProgressLogDbContext>();
 builder.Services.AddAutoMapper(typeof(AutoMapperMappings));
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddIdentityCore<ApplicationUser>()
     .AddRoles<IdentityRole<Guid>>()
@@ -65,6 +67,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     });
+
+builder.Services.AddAuthorization(options =>
+    options.AddPolicy("UserOnly", policy =>
+    policy.RequireAssertion(context =>
+    {
+        // Validate whether user NameIdentifier claim matches userId for resource
+        var userIdClaim = context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+        var userIdRouteValue = new HttpContextAccessor().HttpContext.Request.RouteValues["userId"]?.ToString();
+        return userIdClaim == userIdRouteValue;
+    })));
 
 var app = builder.Build();
 

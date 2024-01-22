@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using MusicProgressLogAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -130,6 +131,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
 }
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 

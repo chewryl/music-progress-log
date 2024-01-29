@@ -10,7 +10,7 @@ namespace MusicProgressLogAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PieceController : ControllerBase
     {
         private readonly IUserRepository<Piece> _repository;
@@ -24,7 +24,7 @@ namespace MusicProgressLogAPI.Controllers
 
         [HttpGet]
         [Route("{userId:Guid}")]
-        [Authorize(Policy = "UserOnly")]
+        //[Authorize(Policy = "UserOnly")]
         public async Task<IActionResult> GetAllForUser(Guid userId, [FromQuery] string? piece = null, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 30)
         {
             return Ok(await _repository.GetAllForUserWithFilterAsync(userId, "piece", piece));

@@ -98,6 +98,19 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
 });
 
+var AllowedOrigins = "_allowedOrigins";
+var origins = builder.Configuration.GetSection("MusicProgressLog:AllowedOrigins").Get<string[]>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AllowedOrigins,
+        policy =>
+        {
+            policy.WithOrigins(origins)
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        });
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     options.TokenValidationParameters = new TokenValidationParameters
@@ -135,6 +148,11 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.UseCors(AllowedOrigins);
+//app.UseCors(options => options.WithOrigins("*").AllowAnyMethod());
 
 app.UseAuthentication();
 app.UseAuthorization();

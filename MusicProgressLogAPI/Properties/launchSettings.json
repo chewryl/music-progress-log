@@ -29,7 +29,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "clientAppWithAPI": {
+    "Client app with API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

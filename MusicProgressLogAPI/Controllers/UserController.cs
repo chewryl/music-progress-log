@@ -81,7 +81,7 @@ namespace MusicProgressLogAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetAll()
         {
             var users = await _repository.GetAllAsync();

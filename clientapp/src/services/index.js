@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import piece from './piece'
+import user from './user'
 
 const musicProgressLogAPI = (url) => {
 	const api = axios.create({
@@ -9,7 +10,8 @@ const musicProgressLogAPI = (url) => {
 	})
 
 	return {
-		piece: piece(api)
+		piece: piece(api),
+		user: user(api)
 	}
 }
 

@@ -26,8 +26,8 @@
       <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
     </ul>
-		<div v-if="piecesForUser">
-			{{ piecesForUser }}
+		<div v-if="users.length">
+			{{ users }}
 		</div>
   </div>
 </template>
@@ -42,11 +42,11 @@ export default {
 	},
 	data () {
 		return {
-			piecesForUser: null
+			users: []
 		}
 	},
 	async mounted () {
-		this.piecesForUser = await musicProgressLogAPI.piece.getAllForUser('6ac8533e-f18d-49a2-23d8-08dc194c7e6a')
+		this.users = await musicProgressLogAPI.user.getAll()
 	}
 }
 </script>
